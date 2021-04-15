@@ -7,7 +7,7 @@ import gif from '../../images/homePage.gif';
 
 console.dir(gif);
 
-const HomePage = () => {
+function HomePage  () {
   return (
     <CSSTransition
       in={true}

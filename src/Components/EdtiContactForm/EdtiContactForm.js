@@ -1,40 +1,61 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
+import { getContacts } from '../../redux/contacts/contacts-selectors';
 import { editContact } from '../../redux/contacts/contacts-operations';
 
 import styles from './EdtiContactForm.module.css';
 
-class EdtiContactForm extends Component {
-  state = {
-    id: '',
-    name: '',
-    number: '',
+function EdtiContactForm ({
+  id,
+  name,
+  number,
+  contacts,
+  showAlert,
+  onEdit,
+  onCloseModal,
+    
+}) {
+  
+  const [editName, setName] = useState(name);
+  const [editNumber, setNumber] = useState(number);
+
+
+ const heandleInputName = event => {
+    setName(event.currentTarget.value);
   };
 
-  componentDidMount() {
-    const { id, name, number } = this.props;
-    this.setState({ id, name, number });
-  }
-
-  heandleInput = event => {
-    this.setState({ [event.currentTarget.name]: event.currentTarget.value });
+  const heandleInputNumber = event => {
+    setNumber(event.currentTarget.value);
   };
 
-  editContact = event => {
+  const verifyNewContact = ({ editName, editNumber }) => {
+    let verify = true;
+    contacts.forEach(({ id: contactId, name, number }) => {
+      if (
+        contactId !== id &&
+        (name.toLowerCase() === editName.toLowerCase() || editNumber === number)
+      ) {
+        showAlert();
+        verify = false;
+      }
+    });
+    return verify;
+  };
+
+  const editContact = event => {
     event.preventDefault();
 
-    this.props.onEdit({ ...this.state });
-    this.props.onCloseModal();
-    this.setState({
-      name: '',
-      number: '',
-    });
+    if (verifyNewContact({ editName, editNumber })) {
+      onEdit({ id, name: editName, number: editNumber });
+      onCloseModal();
+      setName('');
+      setNumber('');
+    }
   };
 
-  render() {
     return (
-      <form className={styles.form} onSubmit={this.editContact}>
+      <form className={styles.form} onSubmit={editContact}>
         <label className={styles.label}>
           Name:
           <input
@@ -42,8 +63,8 @@ class EdtiContactForm extends Component {
             name="name"
             type="text"
             placeholder="Awesome name"
-            value={this.state.name}
-            onChange={this.heandleInput}
+            value={editName}
+            onChange={heandleInputName}
             required
           />
         </label>
@@ -56,8 +77,8 @@ class EdtiContactForm extends Component {
             pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
             maxLength="9"
             placeholder="Cool phone number"
-            value={this.state.number}
-            onChange={this.heandleInput}
+            value={editNumber}
+            onChange={heandleInputNumber}
             required
           />
         </label>
@@ -67,10 +88,13 @@ class EdtiContactForm extends Component {
       </form>
     );
   }
-}
+
+const mapStateToProps = state => ({
+  contacts: getContacts(state),
+});
 
 const mapDispatchToProps = dispatch => ({
   onEdit: contact => dispatch(editContact(contact)),
 });
 
-export default connect(null, mapDispatchToProps)(EdtiContactForm);
+export default connect(mapStateToProps, mapDispatchToProps)(EdtiContactForm);

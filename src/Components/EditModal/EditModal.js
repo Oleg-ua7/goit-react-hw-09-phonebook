@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TransitionsModal({ id, name, number }) {
+export default function TransitionsModal({ id, name, number }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -66,5 +66,3 @@ function TransitionsModal({ id, name, number }) {
     </div>
   );
 }
-
-export default TransitionsModal;

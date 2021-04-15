@@ -1,6 +1,6 @@
-import React, { Component, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { Switch, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 // import { CSSTransition } from 'react-transition-group';
 
 import routes from './routes';
@@ -25,14 +25,14 @@ const Register = lazy(() =>
   import('./views/Register' /* webpackChunkName: "register-view" */),
 );
 
-class App extends Component {
-  state = {};
+export default function App () {
+  const dispatch = useDispatch();
 
-  componentDidMount() {
-    this.props.getCurrentUser();
-  }
 
-  render() {
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
+
     return (
       <>
         <AppBar />
@@ -65,10 +65,3 @@ class App extends Component {
       </>
     );
   }
-}
-
-const mapDispatchToProps = {
-  getCurrentUser: getCurrentUser,
-};
-
-export default connect(null, mapDispatchToProps)(App);

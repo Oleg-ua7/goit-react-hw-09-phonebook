@@ -1,28 +1,37 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
 import styles from './Register.module.css';
 import { registerUser } from '../../redux/auth/auth-operations';
 
-class Register extends Component {
-  state = {
-    name: '',
-    email: '',
-    password: '',
+export default function Register({onRegister}) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+
+  const heandleInputName = event => {
+    setName(event.currentTarget.value);
   };
 
-  heandleInput = event => {
-    this.setState({ [event.currentTarget.name]: event.currentTarget.value });
+  const heandleInputEmail = event => {
+    setEmail(event.currentTarget.value);
   };
 
-  heandleRegisterUser = event => {
+  const heandleInputPassword = event => {
+    setPassword(event.currentTarget.value);
+  };
+
+  const heandleRegisterUser = event => {
     event.preventDefault();
-    this.props.onRegister(this.state);
-    this.setState({ name: '', email: '', password: '' });
+    dispatch(registerUser({ name, email, password }));
+    setName('');
+    setEmail('');
+    setPassword('');
   };
 
-  render() {
     return (
       <CSSTransition
         in={true}
@@ -31,7 +40,7 @@ class Register extends Component {
         classNames="fade"
         unmountOnExit
       >
-        <form className={styles.form} onSubmit={this.heandleRegisterUser}>
+        <form className={styles.form} onSubmit={heandleRegisterUser}>
           <label className={styles.label}>
             Login
             <input
@@ -39,8 +48,8 @@ class Register extends Component {
               name="name"
               type="text"
               placeholder="Unreal name"
-              value={this.state.name}
-              onChange={this.heandleInput}
+              value={name}
+              onChange={heandleInputName}
               required
             />
           </label>
@@ -51,8 +60,8 @@ class Register extends Component {
               name="email"
               type="email"
               placeholder="Funny email"
-              value={this.state.email}
-              onChange={this.heandleInput}
+              value={email}
+              onChange={heandleInputEmail}
               required
             />
           </label>
@@ -63,8 +72,8 @@ class Register extends Component {
               name="password"
               type="password"
               placeholder="Stong password"
-              value={this.state.password}
-              onChange={this.heandleInput}
+              value={password}
+              onChange={heandleInputPassword}
               required
             />
           </label>
@@ -75,10 +84,3 @@ class Register extends Component {
       </CSSTransition>
     );
   }
-}
-
-const mapDispatchToProps = {
-  onRegister: registerUser,
-};
-
-export default connect(null, mapDispatchToProps)(Register);

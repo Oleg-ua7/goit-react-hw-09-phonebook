@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import ContactForm from '../../Components/ContactForm';
 import ContactList from '../../Components/ContactList';
@@ -13,23 +13,20 @@ import styles from './Contacts.module.css';
 import { fetchContacts } from '../../redux/contacts/contacts-operations';
 import { getContactsLength } from '../../redux/contacts/contacts-selectors';
 
-class App extends Component {
-  state = {
-    alert: false,
+export default function Contacts() {
+  const [alert, setAlert] = useState(false);
+
+  const contactsLength = useSelector(getContactsLength);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const showAlert = () => {
+    setAlert(true);
+    setTimeout(() => setAlert(false), 2000);
   };
-
-  componentDidMount() {
-    this.props.fetchContacts();
-  }
-
-  showAlert = () => {
-    this.setState({ alert: true });
-    setTimeout(() => this.setState({ alert: false }), 2000);
-  };
-
-  render() {
-    const { contactsLength } = this.props;
-    const { alert } = this.state;
 
     return (
       <>
@@ -42,7 +39,7 @@ class App extends Component {
         >
           <h1 className={styles.title}>Phonebook</h1>
         </CSSTransition>
-        <ContactForm showAlert={this.showAlert} />
+        <ContactForm showAlert={showAlert} />
         <CSSTransition
           in={contactsLength > 1}
           appear={true}
@@ -65,14 +62,3 @@ class App extends Component {
       </>
     );
   }
-}
-
-const mapStateToProps = state => ({
-  contactsLength: getContactsLength(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  fetchContacts: () => dispatch(fetchContacts()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
