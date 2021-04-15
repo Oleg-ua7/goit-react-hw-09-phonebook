@@ -1,0 +1,17 @@
+@import 'modern-normalize/modern-normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&display=swap');
+
+html {
+  box-sizing: border-box;
+  /* background-color: rgba(50, 90, 141, 0.445); */
+  background-image: url(/src/images/bg-list.png);
+  background-repeat: repeat;
+  background-size: cover;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  font-family: 'Josefin Sans', sans-serif;
+}
